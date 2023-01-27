@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas Deez Nuts</title>
+    <script src="./utils.js" defer></script>
+    <script src="./canvas.js" defer></script>
+    <style>
+      .actions {
+        top: 0;
+        left: 0;
+        width: 100%;
+        right: 1rem;
+        display: flex;
+        margin-top: 1rem;
+        position: absolute;
+        justify-content: flex-end;
+      }
+
+      button {
+        margin: 0 1rem 1rem 0;
+      }
+
+      .layers {
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="actions">
+      <div class="layers">
+        <button onclick="canvas.reorderLayers()">Reverse Layer Order</button>
+      </div>
+
+      <div class="layers">
+        <button onclick="UTILS.drawRandomRect(1)">Random Rect on Layer 1</button>
+        <button onclick="canvas.clearLayer(layer1.id)">Clear Layer 1</button>
+      </div>
+
+      <div class="layers">
+        <button onclick="UTILS.drawRandomRect(2)">Random Rect on Layer 2</button>
+        <button onclick="canvas.clearLayer(layer2.id)">Clear Layer 2</button>
+      </div>
+    </div>
+  </body>
+</html>

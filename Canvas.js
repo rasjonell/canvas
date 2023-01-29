@@ -4,23 +4,49 @@ class Canvas {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    this.zIndex = 0;
     this.dirty = false;
     this.canvas = canvas;
     this.layers = new Map();
     this.context = this.canvas.getContext('2d');
-    this.mouseProcessor = MouseProcessor.DragAndDrop(this);
+    this.highlightProcessor = MouseProcessor.Highlight(this);
+    this.dragAndDropProcessor = MouseProcessor.DragAndDrop(this);
 
-    this.canvas.addEventListener('mousedown', this.mouseProcessor.mouseDown);
-    this.canvas.addEventListener('mousemove', this.mouseProcessor.mouseMove);
-    this.canvas.addEventListener('mouseup', this.mouseProcessor.mouseUp);
+    this.highlightLayer = new Layer(this, Infinity);
+
+    this.canvas.addEventListener('click', this.highlightProcessor.click);
+    this.canvas.addEventListener('mousedown', this.dragAndDropProcessor.mouseDown);
+    this.canvas.addEventListener('mousemove', this.dragAndDropProcessor.mouseMove);
+    this.canvas.addEventListener('mouseup', this.dragAndDropProcessor.mouseUp);
 
     document.body.appendChild(canvas);
   }
 
-  addLayer(zIndex) {
-    const layer = new Layer(this, zIndex);
+  addLayer() {
+    const layer = new Layer(this, this.zIndex++);
     this.layers.set(layer.id, layer);
     return layer;
+  }
+
+  highlight(child) {
+    this.highlightLayer.children = new Map();
+    this.highlightLayer.addChild(
+      child.x - 2,
+      child.y - 2,
+      child.width + 4,
+      child.height + 4,
+      (ctx, child) => {
+        ctx.strokeStyle = 'rgba(0, 0, 255, 0.5)';
+        ctx.strokeRect(child.x, child.y, child.width, child.height);
+      },
+    );
+
+    this.dirty = true;
+  }
+
+  clearHighlight() {
+    this.highlightLayer.children = new Map();
+    this.dirty = true;
   }
 
   removeLayer(id) {
@@ -53,14 +79,15 @@ class Canvas {
 
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     [...this.layers.values()].sort((a, b) => a.zIndex - b.zIndex).forEach((layer) => layer.draw());
+    this.highlightLayer.draw();
     this.dirty = false;
   }
 }
 
 const canvas = new Canvas();
 
-const layer1 = canvas.addLayer(1);
-const layer2 = canvas.addLayer(2);
+const layer1 = canvas.addLayer();
+const layer2 = canvas.addLayer();
 
 layer1.addChild(100, 100, 200, 200, (ctx, child) => {
   ctx.fillStyle = 'red';

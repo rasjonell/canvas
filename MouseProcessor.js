@@ -1,6 +1,7 @@
 window.MouseProcessor = {
   currentLayer: null,
   currentChild: null,
+  clickedChild: null,
 
   offset: {
     x: 0,
@@ -18,6 +19,35 @@ window.MouseProcessor = {
       coords.x < bound.x + bound.width &&
       coords.y > bound.y &&
       coords.y < bound.y + bound.height,
+  },
+
+  Highlight(canvasInstance) {
+    const canvas = canvasInstance.canvas;
+    const layers = canvasInstance.layers;
+
+    return {
+      click: (event) => {
+        const layersArray = [...layers.values()].sort((a, b) => b.zIndex - a.zIndex);
+        const x = event.clientX - canvas.offsetLeft;
+        const y = event.clientY - canvas.offsetTop;
+
+        [...layers.values()]
+          .sort((a, b) => a.zIndex - b.zIndex)
+          .forEach((layer) => {
+            layer.children.forEach((child) => {
+              if (this.utils.isInBound({ x, y }, child)) {
+                this.clickedChild = child.id === this.clickedChild?.id ? null : child;
+              }
+            });
+          });
+
+        if (this.clickedChild) {
+          canvasInstance.highlight(this.clickedChild);
+        } else {
+          canvasInstance.clearHighlight();
+        }
+      },
+    };
   },
 
   DragAndDrop(canvasInstance) {
@@ -45,6 +75,7 @@ window.MouseProcessor = {
 
       mouseMove: (event) => {
         if (!(this.currentChild && this.currentLayer)) return;
+        canvasInstance.clearHighlight();
 
         const x = event.clientX - canvas.offsetLeft;
         const y = event.clientY - canvas.offsetTop;

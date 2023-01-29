@@ -44,7 +44,7 @@ class Canvas {
   }
 
   clearLayer(layerId) {
-    this.layers.get(layerId).children = [];
+    this.layers.get(layerId).children = new Map();
     this.dirty = true;
   }
 

@@ -81,6 +81,8 @@ layer2.addChild(50, 50, 200, 200, (ctx, child) => {
 });
 
 window.canvas = canvas;
+window.layer1 = layer1;
+window.layer2 = layer2;
 
 function render() {
   window.canvas.draw();

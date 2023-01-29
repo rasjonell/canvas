@@ -20,8 +20,8 @@ window.UTILS = {
     ];
   },
 
-  drawRandomRect(layerNum) {
-    const layer = [...window.canvas.layers.values()][layerNum - 1];
+  drawRandomRect(id, num) {
+    const layer = window.canvas.layers.get(id);
 
     const [x, y] = this.getRandomCoords();
     const [r, g, b] = this.getRandomColor();
@@ -32,7 +32,7 @@ window.UTILS = {
 
       ctx.font = '50px Arial';
       ctx.fillStyle = `rgb(${Math.abs(255 - r)}, ${Math.abs(255 - g)}, ${Math.abs(255 - b)})`;
-      ctx.fillText(layerNum, child.x + child.width - 30, child.y + child.height - 5);
+      ctx.fillText(num, child.x + child.width - 30, child.y + child.height - 5);
     });
   },
 };
